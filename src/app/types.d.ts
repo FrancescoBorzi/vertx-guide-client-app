@@ -9,7 +9,7 @@ export interface Page {
   html?: string;
 }
 
-export interface PageReponse extends Response {
+export interface PageResponse extends Response {
   page: Page;
 }
 

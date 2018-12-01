@@ -9,21 +9,67 @@ import { Page } from './types';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+
+  readonly DEFAULT_PAGENAME = 'Example page';
+  readonly DEFAULT_MARKDOWN = '# Example page\n\nSome text _here_.\n';
+
   alertMessage;
   pages: Page[];
+
+  pageId;
+  pageName;
+  pageMarkdown;
 
   constructor(protected apiService: ApiService) {}
 
   ngOnInit() {
-    this.apiService.getAllPages().subscribe((data) => {
-      this.pages = data.pages;
+    this.reload();
+  }
+
+  reload() {
+    this.apiService.getAllPages().subscribe((response) => {
+      this.pages = response.pages;
       console.log(this.pages);
     });
   }
 
-  reload() {}
-  newPage() {}
-  delete() {}
-  pageExists(): boolean { return true; }
-  save() {}
+  newPage() {
+    this.pageId = undefined;
+    this.pageName = this.DEFAULT_PAGENAME;
+    this.pageMarkdown = this.DEFAULT_MARKDOWN;
+  }
+
+  delete() {
+    // TODO
+  }
+
+  pageExists(): boolean {
+    return this.pageId !== undefined;
+  }
+
+  load(id: number) {
+    this.apiService.getPage(id).subscribe((response) => {
+      const page = response.page;
+      this.pageId = page.id;
+      this.pageName = page.name;
+      this.pageMarkdown = page.markdown;
+      this.updateRendering(page.html);
+    });
+  }
+
+  updateRendering(html: string) {
+    // TODO
+  }
+
+  save() {
+    // TODO
+  }
+
+  success(message: string) {
+    // TODO
+  }
+
+  error(message: string) {
+    // TODO
+  }
 }

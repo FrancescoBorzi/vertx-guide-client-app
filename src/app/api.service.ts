@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { PagesResponse } from './types';
+import { PageResponse, PagesResponse } from './types';
 
 @Injectable({
   providedIn: 'root'
@@ -14,5 +14,9 @@ export class ApiService {
 
   getAllPages() {
     return this.httpClient.get<PagesResponse>(this.baseUrl + 'pages');
+  }
+
+  getPage(id: number) {
+    return this.httpClient.get<PageResponse>(this.baseUrl + 'pages/' + id);
   }
 }

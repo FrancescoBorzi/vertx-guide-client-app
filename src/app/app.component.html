@@ -3,16 +3,6 @@
   <div class="row">
 
     <div class="col-md-12">
-      <!--<span class="dropdown">-->
-      <!--<button class="btn btn-secondary dropdown-toggle" type="button" id="pageDropdownButton" data-toggle="dropdown"-->
-      <!--aria-haspopup="true" aria-expanded="false">-->
-      <!--<i class="fas fa-file-text" aria-hidden="true"></i> Pages-->
-      <!--</button>-->
-      <!--<div class="dropdown-menu" aria-labelledby="pageDropdownButton">-->
-      <!--<a ng-repeat="page in pages track by page.id" class="dropdown-item" (click)="load(page.id)" href="#">{{page.name}}</a>-->
-      <!--&lt;!&ndash;1&ndash;&gt;-->
-      <!--</div>-->
-      <!--</span>-->
       <div class="left-buttons">
         <div class="btn-group" dropdown>
           <button id="button-basic" dropdownToggle type="button" class="btn btn-secondary dropdown-toggle"
@@ -21,11 +11,8 @@
           </button>
           <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
               role="menu" aria-labelledby="button-basic">
-            <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-            <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
-            <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
-            <li class="divider dropdown-divider"></li>
-            <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+            <li role="menuitem" *ngFor="let page of pages">
+              <a class="dropdown-item" href="#" (click)="load(page.id)">{{ page.name }}</a>
             </li>
           </ul>
         </div>
