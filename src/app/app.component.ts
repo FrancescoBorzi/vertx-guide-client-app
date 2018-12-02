@@ -39,8 +39,6 @@ export class AppComponent implements OnInit {
   reload() {
     this.apiService.getAllPages().subscribe((response) => {
       this.pages = response.pages;
-      const guessMaxId = Math.max(...this.pages.map(page => page.id));
-      this.load(guessMaxId || 0);
     });
   }
 
@@ -68,7 +66,10 @@ export class AppComponent implements OnInit {
   }
 
   delete() {
-    // TODO
+    this.apiService.deletePage(this.pageId).subscribe(() => {
+      this.reload();
+      this.newPage();
+    });
   }
 
   pageExists(): boolean {
@@ -89,6 +90,14 @@ export class AppComponent implements OnInit {
     this.renderedHtml = this.sanitizer.sanitize(SecurityContext.HTML, html);
   }
 
+  reloadPage() {
+    this.apiService.getAllPages().subscribe((response) => {
+      this.pages = response.pages;
+      const guessMaxId = Math.max(...this.pages.map(page => page.id));
+      this.load(guessMaxId || 0);
+    });
+  }
+
   save() {
     let payload: PagePayload;
     if (this.pageId === undefined) {
@@ -97,14 +106,15 @@ export class AppComponent implements OnInit {
         'markdown': this.pageMarkdown
       };
       this.apiService.addPage(payload).subscribe(() => {
-        this.reload();
+        this.reloadPage();
       });
     } else {
       payload = {
         'markdown': this.pageMarkdown,
       };
       this.apiService.editPage(this.pageId, payload).subscribe(() => {
-
+        this.reload();
+        this.newPage();
       });
     }
   }

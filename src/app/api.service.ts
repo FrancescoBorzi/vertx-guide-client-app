@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Page, PagePayload, PageResponse, PagesResponse } from './types';
+import { PagePayload, PageResponse, PagesResponse } from './types';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +33,10 @@ export class ApiService {
       this.apiUrl + 'pages/' + id,
       payload,
     );
+  }
+
+  deletePage(id: number) {
+    return this.httpClient.delete(this.apiUrl + 'pages/' + id);
   }
 
   getMarkdown(markdown: string) {
