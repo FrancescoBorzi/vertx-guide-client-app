@@ -36,7 +36,11 @@
     </div>
 
     <div class="col-md-12"> <!--4-->
-      <div class="invisible alert" role="alert" id="alertMessage">
+      <div
+        class="alert my-2"
+        role="alert"
+        [ngClass]="{'invisible': !alertShown, 'alert-success': alertSuccess, 'alert-danger': !alertSuccess }"
+      >
         {{ alertMessage }}
       </div>
     </div>

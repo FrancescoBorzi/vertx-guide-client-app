@@ -5,7 +5,6 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { ApiService } from './api.service';
 import { ErrorResponse, Page, PagePayload } from './types';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -17,14 +16,17 @@ export class AppComponent implements OnInit {
   readonly DEFAULT_PAGENAME = 'Example page';
   readonly DEFAULT_MARKDOWN = '# Example page\n\nSome text _here_.\n';
 
-  alertMessage;
+  alertMessage: string;
+  alertShown = false;
+  alertSuccess: boolean;
+
   pages: Page[];
   renderedHtml: SafeHtml;
   keyUp = new Subject<any>();
 
-  pageId;
-  pageName;
-  pageMarkdown;
+  pageId: number;
+  pageName: string;
+  pageMarkdown: string;
 
   constructor(
     private apiService: ApiService,
@@ -128,12 +130,20 @@ export class AppComponent implements OnInit {
   }
 
   success(message: string) {
-    // TODO
-    console.log(message);
+    this.alert(message, true);
   }
 
   error(message: string) {
-    // TODO
-    console.log(message);
+    this.alert(message, false);
+  }
+
+  alert(message: string, success: boolean) {
+    this.alertMessage = message;
+    this.alertSuccess = success;
+    this.alertShown = true;
+
+    setInterval(() => {
+      this.alertShown = false;
+    }, 5000);
   }
 }
