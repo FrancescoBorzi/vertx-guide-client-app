@@ -4,7 +4,8 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { ApiService } from './api.service';
-import { Page, PagePayload } from './types';
+import { ErrorResponse, Page, PagePayload } from './types';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -65,13 +66,6 @@ export class AppComponent implements OnInit {
     this.updateMarkdown(this.pageMarkdown);
   }
 
-  delete() {
-    this.apiService.deletePage(this.pageId).subscribe(() => {
-      this.reload();
-      this.newPage();
-    });
-  }
-
   pageExists(): boolean {
     return this.pageId !== undefined;
   }
@@ -107,23 +101,39 @@ export class AppComponent implements OnInit {
       };
       this.apiService.addPage(payload).subscribe(() => {
         this.reloadPage();
+        this.success('Page created');
+      }, (response: ErrorResponse) => {
+        this.error(response.error.error);
       });
     } else {
       payload = {
         'markdown': this.pageMarkdown,
       };
       this.apiService.editPage(this.pageId, payload).subscribe(() => {
-        this.reload();
-        this.newPage();
+        this.success('Page saved');
+      }, (response: ErrorResponse) => {
+        this.error(response.error.error);
       });
     }
   }
 
+  delete() {
+    this.apiService.deletePage(this.pageId).subscribe(() => {
+      this.reload();
+      this.newPage();
+      this.success('Page deleted');
+    }, (response: ErrorResponse) => {
+      this.error(response.error.error);
+    });
+  }
+
   success(message: string) {
     // TODO
+    console.log(message);
   }
 
   error(message: string) {
     // TODO
+    console.log(message);
   }
 }

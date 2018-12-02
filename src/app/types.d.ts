@@ -1,3 +1,5 @@
+import { HttpErrorResponse } from '@angular/common/http';
+
 export interface Response {
   success: boolean;
 }
@@ -20,4 +22,11 @@ export interface PageResponse extends Response {
 
 export interface PagesResponse extends Response {
   pages: Page[];
+}
+
+export interface ErrorResponse extends HttpErrorResponse{
+  error: {
+    success: false;
+    error: string;
+  };
 }
