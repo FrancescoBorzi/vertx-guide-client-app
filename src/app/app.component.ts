@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Sanitizer, SecurityContext } from '@angular/core';
+import { SafeHtml } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { ApiService } from './api.service';
 import { Page } from './types';
@@ -15,21 +18,38 @@ export class AppComponent implements OnInit {
 
   alertMessage;
   pages: Page[];
+  renderedHtml: SafeHtml;
+  keyUp = new Subject<any>();
 
   pageId;
   pageName;
   pageMarkdown;
 
-  constructor(protected apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private sanitazer: Sanitizer,
+  ) {}
 
   ngOnInit() {
     this.reload();
+    this.initLiveRendering();
   }
 
   reload() {
     this.apiService.getAllPages().subscribe((response) => {
       this.pages = response.pages;
-      console.log(this.pages);
+    });
+  }
+
+  initLiveRendering() {
+    this.keyUp.pipe(
+      map(event => event.target.value),
+      debounceTime(300),
+      distinctUntilChanged(),
+    ).subscribe((newMarkDown: string) => {
+      this.apiService.getMarkDown(newMarkDown).subscribe((newHtml) => {
+        this.updateRendering(newHtml);
+      });
     });
   }
 
@@ -58,7 +78,7 @@ export class AppComponent implements OnInit {
   }
 
   updateRendering(html: string) {
-    // TODO
+    this.renderedHtml = this.sanitazer.sanitize(SecurityContext.HTML, html);
   }
 
   save() {
