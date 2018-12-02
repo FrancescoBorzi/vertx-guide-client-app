@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { ApiService } from './api.service';
-import { Page } from './types';
+import { Page, PagePayload } from './types';
 
 @Component({
   selector: 'app-root',
@@ -32,12 +32,15 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.reload();
+    this.newPage();
     this.initLiveRendering();
   }
 
   reload() {
     this.apiService.getAllPages().subscribe((response) => {
       this.pages = response.pages;
+      const guessMaxId = Math.max(...this.pages.map(page => page.id));
+      this.load(guessMaxId || 0);
     });
   }
 
@@ -46,10 +49,14 @@ export class AppComponent implements OnInit {
       map(event => event.target.value),
       debounceTime(300),
       distinctUntilChanged(),
-    ).subscribe((newMarkDown: string) => {
-      this.apiService.getMarkDown(newMarkDown).subscribe((newHtml) => {
-        this.updateRendering(newHtml);
-      });
+    ).subscribe((newMarkdown: string) => {
+      this.updateMarkdown(newMarkdown);
+    });
+  }
+
+  updateMarkdown(newMarkdown: string) {
+    this.apiService.getMarkdown(newMarkdown).subscribe((newHtml) => {
+      this.updateRendering(newHtml);
     });
   }
 
@@ -57,6 +64,7 @@ export class AppComponent implements OnInit {
     this.pageId = undefined;
     this.pageName = this.DEFAULT_PAGENAME;
     this.pageMarkdown = this.DEFAULT_MARKDOWN;
+    this.updateMarkdown(this.pageMarkdown);
   }
 
   delete() {
@@ -82,7 +90,23 @@ export class AppComponent implements OnInit {
   }
 
   save() {
-    // TODO
+    let payload: PagePayload;
+    if (this.pageId === undefined) {
+      payload = {
+        'name': this.pageName,
+        'markdown': this.pageMarkdown
+      };
+      this.apiService.addPage(payload).subscribe(() => {
+        this.reload();
+      });
+    } else {
+      payload = {
+        'markdown': this.pageMarkdown,
+      };
+      this.apiService.editPage(this.pageId, payload).subscribe(() => {
+
+      });
+    }
   }
 
   success(message: string) {

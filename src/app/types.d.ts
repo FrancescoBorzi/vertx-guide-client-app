@@ -9,6 +9,11 @@ export interface Page {
   html?: string;
 }
 
+export interface PagePayload {
+  name?: string;
+  markdown: string;
+}
+
 export interface PageResponse extends Response {
   page: Page;
 }
