@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private sanitazer: Sanitizer,
+    private sanitizer: Sanitizer,
   ) {}
 
   ngOnInit() {
@@ -78,7 +78,7 @@ export class AppComponent implements OnInit {
   }
 
   updateRendering(html: string) {
-    this.renderedHtml = this.sanitazer.sanitize(SecurityContext.HTML, html);
+    this.renderedHtml = this.sanitizer.sanitize(SecurityContext.HTML, html);
   }
 
   save() {
