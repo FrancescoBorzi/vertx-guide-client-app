@@ -24,7 +24,7 @@ export interface PagesResponse extends Response {
   pages: Page[];
 }
 
-export interface ErrorResponse extends HttpErrorResponse{
+export interface ErrorResponse extends HttpErrorResponse {
   error: {
     success: false;
     error: string;
